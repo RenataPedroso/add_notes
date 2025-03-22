@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from .models import Topic,Entry
 from .forms import TopicForm, EntryForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-
 # Create your views here.
 
 def index(request):
@@ -14,7 +13,7 @@ def index(request):
 @login_required
 def topics(request):
     '''Mostra todos os assuntos'''
-    topics = Topic.objects.order_by('date_added') #pegando do mais antigo para o mais recente
+    topics = Topic.objects.filter(owner=request.user).order_by('date_added') #pegando do mais antigo para o mais recente
     context = {
         'topics': topics
         }
@@ -27,6 +26,10 @@ def topic(request, topic_id):
     '''Apresenta um unico assunto com todas as suas entradas'''
 
     topic = Topic.objects.get(id = topic_id)
+    #garantindo que o topico pertence ao usuario logado
+    if topic.owner != request.user:
+        raise Http404
+
     entries = topic.entry_set.order_by('-date_added') #pegando do mais recente para mais antigo
     context = {
         'topic': topic,
@@ -48,7 +51,9 @@ def new_topic(request):
         if form.is_valid():
             #se for valido ele salva os dados no db, automaticamente porque
             #o form tem ligacao direta com o model e o mode com o banco de dados
-            form.save()
+            new_topic = form.save(commit=False) #aqui estou recebendo o objeto sem salva-lo no banco de dados
+            new_topic.owner = request.user #aqui estou atribuindo o usuario logado ao topico criado
+            new_topic.save() #entao salvo de fato o novo topico com o novo usuario atribuido
             #redirecionando para a pagina de topicos
             #o reverse utiliza o name da URL no lugar do caminho completo e isso
             #é bom porque o dominio pode mudar e nao precisamos austar no codigo
@@ -63,6 +68,11 @@ def new_topic(request):
 def new_entry(request, topic_id):
     '''Adiciona uma nova anotacao'''
     topic = Topic.objects.get(id = topic_id)
+    
+    #garantindo que o topico pertence ao usuario logado
+    if topic.owner != request.user:
+        raise Http404
+    
     if request.method != 'POST':
         form = EntryForm()
     else:
@@ -88,6 +98,10 @@ def edit_entry(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
 
+    #garantindo que o topico pertence ao usuario logado
+    if topic.owner != request.user:
+        raise Http404
+    
     if request.method != 'POST':
         #aqui nao precisamos criar outro form porque ja existe um form para a entry
         form = EntryForm(instance=entry) #para que o formulario apareca com pre preenchimento, utilizamos o instace
