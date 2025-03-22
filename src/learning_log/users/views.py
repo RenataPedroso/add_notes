@@ -9,8 +9,13 @@ def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
 
+
 def signup(request):
     '''Cadastrando um usuario novo'''
+    #nao permitindo que um usuario cadastre outro usuario quando authenticado
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('index'))
+
     if request.method != 'POST':
         form = UserCreationForm()
     else:

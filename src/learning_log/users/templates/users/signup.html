@@ -1,12 +1,28 @@
 {% extends "learning_logs/base.html" %}
+{% load bootstrap3 %}
+
+{%block header %}
+    <h1>Crie sua conta:</h1>
+{% endblock header %}
 
 {% block content %}
-    <form action="{% url 'signup' %}" method="post">
+    {% if form.errors %}
+        <p class="aviso-error" style="color: red;">* Seu nome de usuário não deve conter caracteres especiais</p>
+        <p class="aviso-error" style="color: red;">* Sua senha deve ter mais de 8 dígitos, letras, números, caracteres especiais e não pode conter o nome de usuário.</p>
+        <p class="aviso-error" style="color: red;">* As senhas digitadas precisam ser iguais.</p>
+    {% endif %}
+
+    <form action="{% url 'signup' %}" method="post" class="ul-none">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% bootstrap_form form %}
+
         <!--Nao precisamos colocar os inputs porque a propria view template
         do django ja contem esses inputs-->
-        <button name="submit">Sign up</button>
+        
+        {% buttons %}
+            <button name="submit" class="btn btn-primary">Sign up</button>
+        {% endbuttons %}
+
         <!--Precisamos falar para qual pagina queremos enviar o usuario autenticado-->
         <input type="hidden" name="next" value="{% url 'index' %}"/>
     </form>
