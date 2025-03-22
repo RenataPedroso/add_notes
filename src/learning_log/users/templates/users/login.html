@@ -1,12 +1,19 @@
 {% extends "learning_logs/base.html" %}
+{% load bootstrap3 %}
+
+{%block header %}
+    <h1>Entre com suas informações de login:</h1>
+{% endblock header %}
 
 {% block content %}
-    <form action="{% url 'login' %}" method="post">
+    <form action="{% url 'login' %}" method="post" class="form">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% bootstrap_form form %}
         <!--Nao precisamos colocar os inputs porque a propria view template
         do django ja contem esses inputs-->
-        <button name="submit">Entrar</button>
+        {% buttons %}
+            <button name="submit" class="btn btn-primary">Entrar</button>
+        {% endbuttons %}
         <!--Precisamos falar para qual pagina queremos enviar o usuario autenticado-->
         <input type="hidden" name="next" value="{% url 'index' %}"/>
     </form>

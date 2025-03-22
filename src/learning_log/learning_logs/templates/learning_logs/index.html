@@ -1,6 +1,12 @@
 {% extends "learning_logs/base.html" %} <!--Ao utilizar chaves e %% dizemos que queremos executar codigos python/django no html chamamo isso de tag de template do django-->
 
+{% block header %}
+    <div class="jumbotron">
+        <h1>Tenha suas anotações sempre à mão!</h1>
+    </div>
+{% endblock header%}
+
 {% block content %}
-    <p>Essa aplicacao te ajudara a organizar seus estudos</p>
+    <h2>Nunca mais perca suas anotações, <a href="{% url 'signup' %}"> crie uma conta</a> no Add Notes.</h2>
 {% endblock content %}
 
