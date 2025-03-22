@@ -1,12 +1,12 @@
 {% extends "learning_logs/base.html" %}
 
 {% block content %}
-    <form action="{% url 'login' %}" method="post">
+    <form action="{% url 'signup' %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <!--Nao precisamos colocar os inputs porque a propria view template
         do django ja contem esses inputs-->
-        <button name="submit">Entrar</button>
+        <button name="submit">Sign up</button>
         <!--Precisamos falar para qual pagina queremos enviar o usuario autenticado-->
         <input type="hidden" name="next" value="{% url 'index' %}"/>
     </form>
