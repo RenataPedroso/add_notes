@@ -5,6 +5,9 @@
     <!--O usuario é passado por contexto para essa view, assim como fiz com os topicos/anotacoes-->
     {% if user.is_authenticated %}
         Olá, {{user.username}}!
+        <a href="{% url 'logout' %}">
+            Logout
+        </a>
     {% else %}
         <a href="{% url 'login' %}">
             Login
